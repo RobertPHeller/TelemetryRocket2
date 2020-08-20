@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Sun Aug 9 12:05:15 2020
-//  Last Modified : <200811.0859>
+//  Last Modified : <200820.1224>
 //
 //  Description	
 //
@@ -52,7 +52,7 @@ static const char rcsid[] = "@(#) : $Id$";
 
 #include "SerialCLI.h"
 
-// Construtor.  Just initializes the cock
+// Construtor.  Just initializes the clock
 SerialCLI::SerialCLI() 
       : uRTCLib(URTCLIB_ADDRESS, URTCLIB_MODEL_DS3231)
 {
