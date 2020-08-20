@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Sun Aug 9 10:54:30 2020
-//  Last Modified : <200809.1512>
+//  Last Modified : <200811.0850>
 //
 //  Description	
 //
@@ -52,13 +52,17 @@
 
 static const char rcsid[] = "@(#) : $Id$";
 
+/* Serial Command Line.  Also embeds the clock and the logger function */
 SerialCLI Command;
+/* Accelerometer */
 Adafruit_ADXL345_Unified accel = Adafruit_ADXL345_Unified(1);
+/* Barometric pressure, Altimiter, and Temporature sensor */
 Adafruit_MPL3115A2 baro = Adafruit_MPL3115A2();
 
 void setup() {
-    // put your setup code here, to run once:
+    // Start up the serial interface
     Serial.begin(115200);
+    // Mount and set up the uSD card
     if(!SD.begin()) {
         Serial.println("Card Mount Failed");
         return;
@@ -82,6 +86,7 @@ void setup() {
     uint64_t cardSize = SD.cardSize() / (1024 * 1024);
     Serial.printf("SD Card Size: %lluMB\n", cardSize);
     
+    // Start up the Accelerometer
     if (!accel.begin()) {
         Serial.println("Ooops, no ADXL345 detected ... Check your wiring!");
         return;
@@ -89,11 +94,13 @@ void setup() {
     
     accel.setRange(ADXL345_RANGE_16_G); // +/- 16gs
     
+    // Start up the Barometric Pressure, Altimeter, and Temperature sensor
     if (! baro.begin()) {
         Serial.println("Couldnt find sensor");
         return;
     }
     
+    // All ready to go...
     Serial.println("TTGO Telemtry Board 0.0");
     Serial.print(">>");
     Serial.flush();
@@ -102,16 +109,20 @@ void setup() {
                 
 void loop() {
     sensors_event_t accelevent;
-    // put your main code here, to run repeatedly:
+    // Check the command line
     Command.ProcessCommandLine();
     
+    // Read sensors
     accel.getEvent(&accelevent);
     
     float pascals = baro.getPressure();
     float altm = baro.getAltitude();
     float tempC = baro.getTemperature();
     
+    // Log a datum
     Command.LogData(accelevent.acceleration.x,accelevent.acceleration.y,\
                     accelevent.acceleration.z,pascals,altm,tempC);
+    
+    // Sleep for 1 second
     delay(1000);
 }    

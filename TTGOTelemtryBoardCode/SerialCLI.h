@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Sun Aug 9 12:05:00 2020
-//  Last Modified : <200809.1532>
+//  Last Modified : <200811.0852>
 //
 //  Description	
 //
@@ -49,15 +49,22 @@
 
 class SerialCLI : public uRTCLib {
 private:
+    // Command letters
     typedef enum {SET='S', OPENNEW='O', CLOSE='C', HELP='H'} Commands;
+    // Help text
     static const char *HelpText[];
 public:
+    // Constructor
     SerialCLI();
+    // Destructor
     ~SerialCLI();
+    // Command line processor
     void ProcessCommandLine();
+    // Log a datum
     void LogData(float accel_x,float accel_y,float accel_z,float pascals,
                  float altm,float tempC);
 private:
+    // Log file
     File _dataLog;
 };
 
