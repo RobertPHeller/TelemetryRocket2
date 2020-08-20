@@ -1,0 +1,31 @@
+Cmp-Mod V01 Created by CvPcb (22-Jun-2014 BZR 4027)-stable date = Mon 29 Apr 2019 02:33:01 PM EDT
+
+BeginCmp
+TimeStamp = /5CC74193;
+Reference = BO101;
+ValeurCmp = ADAFRUIT_ADXL345;
+IdModule  = AdafruitADXL345BO;
+EndCmp
+
+BeginCmp
+TimeStamp = /5CC741BA;
+Reference = BO102;
+ValeurCmp = ADAFRUIT_MPL3115A2_BO;
+IdModule  = ADAFRUITMPL3115A2BO;
+EndCmp
+
+BeginCmp
+TimeStamp = /5CC741AB;
+Reference = BO103;
+ValeurCmp = ADAFRUIT_DS3231_RTC;
+IdModule  = ADAFRUITDS3231RTCBO;
+EndCmp
+
+BeginCmp
+TimeStamp = /5CC7417F;
+Reference = U101;
+ValeurCmp = TTGO-T1;
+IdModule  = TIGO-T1;
+EndCmp
+
+EndListe
