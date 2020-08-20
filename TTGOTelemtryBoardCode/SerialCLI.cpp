@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Sun Aug 9 12:05:15 2020
-//  Last Modified : <200809.1540>
+//  Last Modified : <200811.0859>
 //
 //  Description	
 //
@@ -52,15 +52,18 @@ static const char rcsid[] = "@(#) : $Id$";
 
 #include "SerialCLI.h"
 
+// Construtor.  Just initializes the cock
 SerialCLI::SerialCLI() 
       : uRTCLib(URTCLIB_ADDRESS, URTCLIB_MODEL_DS3231)
 {
 }
 
+// Destructor
 SerialCLI::~SerialCLI()
 {
 }
 
+// Help text
 const char *SerialCLI::HelpText[] = {
     "TTGO Telemtry Board 0.0",
     "",
@@ -77,17 +80,20 @@ const char *SerialCLI::HelpText[] = {
     NULL
 };
 
+// Process a command over the serial port (USB connection to host)
 void SerialCLI::ProcessCommandLine()
 {
     char buffer[256];
     int len;
     
+    // If there is serial data, read one line.
     if (Serial.available() > 0) {
         len = Serial.readBytesUntil('\r',buffer,sizeof(buffer)-1);
         if (len == 0) return;
         buffer[len] = '\0';
+        // Process command letter
         switch ((Commands) (toupper(buffer[0]))) {
-        case SET:
+        case SET: // Set the clock.  Do this before launch.
             char unused;
             int month, date, year, hours, minutes, seconds;
             if (sscanf(buffer,"%c %d/%d/%d %d:%d:%d",&unused,&month,&date,
@@ -99,7 +105,7 @@ void SerialCLI::ProcessCommandLine()
                 Serial.println("Clock set.");
             }
             break;
-        case OPENNEW:
+        case OPENNEW: // Open a new log file. Do this before launching.
             {
                 if (_dataLog) {_dataLog.close();}
                 char *p = buffer;
@@ -115,14 +121,15 @@ void SerialCLI::ProcessCommandLine()
                 }
             }
             break;
-            case CLOSE:
-                if (_dataLog) {
+        case CLOSE: // Close the log file.  Do this before removing uSD card 
+                    // (after launch).
+            if (_dataLog) {
                     _dataLog.close();
                 }
                 Serial.println("");
                 Serial.println("File Closed.");
             break;
-        case HELP:
+        case HELP:  // Display help text
             {
                 int i, n = sizeof(HelpText) / sizeof(HelpText[0]);
                 for (i = 0; i < n && HelpText[i]; i++) {
@@ -130,10 +137,11 @@ void SerialCLI::ProcessCommandLine()
                 }
                 break;
             }
-            default:
-                Serial.println("");
-                Serial.println("Unknown Command.");
+        default:
+            Serial.println("");
+            Serial.println("Unknown Command.");
         }
+        // Get current time
         refresh();
         uint16_t yr = year()+2000;
         byte month  = this->month();
@@ -148,12 +156,15 @@ void SerialCLI::ProcessCommandLine()
     }
 }
 
+
+// Log a datum
 void SerialCLI::LogData(float accel_x,float accel_y,float accel_z,
                         float pascals,float altm,float tempC)
 {
     char buffer[256];
     
-    if (!_dataLog) return;
+    if (!_dataLog) return; // If file is not open, just return.
+    // Get timestamp
     refresh();
     uint16_t yr = year()+2000;
     byte month  = this->month();
@@ -161,16 +172,20 @@ void SerialCLI::LogData(float accel_x,float accel_y,float accel_z,
     byte hr     = hour();
     byte min    = minute();
     byte sec    = second();
+    // Generate and write timestamp
     sprintf(buffer,"%d/%d/%d %02d:%02d:%02d: ",month,date,yr,hr,min,sec);
     _dataLog.print(buffer);
+    // Acceleration data
     sprintf(buffer,"Acceleration: %10.3g, %10.3g, %10.3g m/s^2",accel_x,accel_y,accel_z);
     _dataLog.print(buffer);
+    // Barometric Pressure, Altitude, and Temperature
     sprintf(buffer,"; Barometric Pressure: %10.3g Inches (Hg)",pascals/3377.0);
     _dataLog.print(buffer);
     sprintf(buffer,"; Altitude: %10.3g meters",altm);
     _dataLog.print(buffer);
     sprintf(buffer,"; Temperature: %10.3g *C",tempC);
     _dataLog.print(buffer);
+    // End of line.
     _dataLog.println();
 }
           
