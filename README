@@ -1,7 +1,14 @@
 This is a design for a 2-stage model rocket that will boost a basic 
 ESP32-based telemetry board (accelerometer, altimeter, barometric pressure 
-sensor, and temperature sensor, along with a real time clock.  The telemetry 
-readings are saved on the MicroSD card on the TTGO-T1 board.
+sensor, and temperature sensor, along with a real time clock).  The telemetry 
+readings are saved on a MicroSD card on the TTGO-T1 board using its MicroSD 
+slot. The system is powered by a LiPo battery while in flight and the integrated
+battery charger on the TTGO-T1 board is used to charge the battery via the 
+micro-B USB connector.  The sketch uses the USB connection for serial communication
+to set the RTC and open the log file.
 
-The first stage is a four engine cluster, with 1 E12-0 and three D12-3 
+The first stage has a four engine cluster, with 1 E12-0 and three D12-3 
 engines.  The second stage takes one E12-8 engine.
+
+Both stages have parachute recovery.  The first stage has three (small) parachutes 
+above the outer three engines.  The upper stage has a single (large) parachute.
